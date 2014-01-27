@@ -2,6 +2,7 @@ package com.luxsoft.brandsrecognition;
 
 import org.opencv.android.Utils;
 import org.opencv.core.Mat;
+import org.opencv.core.Size;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -28,6 +29,7 @@ public class CameraView implements Handler.Callback {
 	
 	private boolean isReady;
 	private SurfaceHolder holder;
+	private Controller controller;
 	private int width, height;
 	private int cameraWidth, cameraHeight;
 	private Bitmap frame;
@@ -35,8 +37,9 @@ public class CameraView implements Handler.Callback {
 	private Matrix matrix;
 	private Rect processingArea;
 	
-	public CameraView(SurfaceHolder holder) {
+	public CameraView(SurfaceHolder holder, Controller controller) {
 		this.holder = holder;
+		this.controller = controller;
 		paint = new Paint();
 		isReady = false;
 		frame = null;
@@ -66,13 +69,25 @@ public class CameraView implements Handler.Callback {
 	}
 	
 	public void calculateMatrix() {
-		if(width == 0 || cameraWidth == 0) {
+		Float scale = controller.getScale();
+		Size cameraSize = controller.getCameraSize();
+		Size surfaceSize = controller.getSurfaceSize();
+		if(scale == null) {
+			return;
+		}
+		matrix = new Matrix();
+		matrix.postScale(scale, scale);
+		matrix.postTranslate(
+				(float)(surfaceSize.width - cameraSize.width*scale)/2, 
+				(float)(surfaceSize.height - cameraSize.height*scale)/2
+				);
+		/*if(width == 0 || cameraWidth == 0) {
 			return;
 		}
 		matrix = new Matrix();
 		float scale = Math.max((float)width/cameraWidth, (float)height/cameraHeight);
 		matrix.postScale(scale, scale);
-		matrix.postTranslate((width - cameraWidth*scale)/2, (height - cameraHeight*scale)/2);
+		matrix.postTranslate((width - cameraWidth*scale)/2, (height - cameraHeight*scale)/2);*/
 	}
 	
 	private void draw() {

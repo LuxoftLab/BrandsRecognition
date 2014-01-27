@@ -3,6 +3,7 @@ package com.luxsoft.brandsrecognition;
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.core.Mat;
+import org.opencv.core.Size;
 
 import android.content.Context;
 import android.graphics.Rect;
@@ -15,27 +16,37 @@ public class Controller extends BaseLoaderCallback implements SurfaceHolder.Call
 	
 	private CameraView cameraView;
 	private CameraCapture camera;
+	private Algorithm algo;
 	private ProccesingArea processingArea;
 	private Handler handler;
 	private boolean opencvLoaded;
+	
+	private Size cameraSize;
+	private Size surfaceSize;
+	private org.opencv.core.Rect area;
 	
 	public Controller(Context context, SurfaceView surface) {
 		super(context);
 		SurfaceHolder holder = surface.getHolder();
 		holder.addCallback(this);
 		
-		cameraView = new CameraView(holder);
+		cameraView = new CameraView(holder, this);
 		camera = new CameraCapture(this);
+		algo = new Algorithm(context, this);
 		processingArea = new ProccesingArea(this);
 		
 		handler = new Handler(context.getMainLooper(), cameraView);
 		surface.setOnTouchListener(processingArea);
 		
 		opencvLoaded = false;
+		cameraSize = null;
+		surfaceSize = null;
+		area = null;
 	}
 	
 	public void pause() {
 		camera.disable();
+		algo.disable();
 	}
 	
 	public void resume() {
@@ -44,6 +55,7 @@ public class Controller extends BaseLoaderCallback implements SurfaceHolder.Call
 	
 	private void startThreads() {
 		if(opencvLoaded) {
+			new Thread(algo).start();
 			new Thread(camera).start();
 		}
 	}
@@ -61,13 +73,19 @@ public class Controller extends BaseLoaderCallback implements SurfaceHolder.Call
 	
 	public void onFrame(Mat frame) {
 		handler.obtainMessage(CameraView.UPDATE_FRAME, frame).sendToTarget();
+		if(area != null) {
+			algo.putFrame(frame, area);
+		}
 	}
 	
 	public void onProccesingAreaChanged(Rect area) {
+		recalculateArea();
 		handler.obtainMessage(CameraView.UPDATE_AREA, area).sendToTarget();
 	}
 	
 	public void cameraChanged(int width, int height) {
+		cameraSize = new Size(width, height);
+		recalculateArea();
 		cameraView.setCameraSize(width, height);
 		Log.d("lifecycle", "camera changed: "+width+"x"+height);
 	}
@@ -83,6 +101,7 @@ public class Controller extends BaseLoaderCallback implements SurfaceHolder.Call
 		if(width < height) {
 			return;
 		}
+		surfaceSize = new Size(width, height);
 		processingArea.setSurfaceSize(width, height);
 		cameraView.setSurfaceSize(width, height);
 		cameraView.setReady(true);	
@@ -93,5 +112,40 @@ public class Controller extends BaseLoaderCallback implements SurfaceHolder.Call
 	public void surfaceDestroyed(SurfaceHolder holder) {
 		cameraView.setReady(false);
 		Log.d("lifecycle", "surface destroyed");
+	}
+	
+	public Float getScale() {
+		if(surfaceSize == null || cameraSize == null) {
+			return null;
+		}
+		float scale = (float) Math.max(
+				surfaceSize.width/cameraSize.width, 
+				surfaceSize.height/cameraSize.height
+				);
+		return scale;
+	}
+	
+	public Size getCameraSize() {
+		return cameraSize;
+	}
+	
+	public Size getSurfaceSize() {
+		return surfaceSize;
+	}
+	
+	private void recalculateArea() {
+		Float scale = getScale();
+		Rect area = processingArea.getArea();
+		if(scale == null || area == null) {
+			return;
+		}
+		int areaWidth = (int) (area.width()*scale);
+		int areaHeight = (int) (area.height()*scale);
+		this.area = new org.opencv.core.Rect(
+				(int)(cameraSize.width-areaWidth)/2,
+				(int)(cameraSize.height-areaHeight)/2,
+				(int)(cameraSize.width+areaWidth)/2,
+				(int)(cameraSize.height+areaHeight)/2
+				);
 	}
 }

@@ -195,5 +195,9 @@ public class ProccesingArea implements OnTouchListener {
 	private boolean test(int mask) {
 		return (action & mask) == mask;
 	}
+	
+	public Rect getArea() {
+		return area;
+	}
 
 }

@@ -7,6 +7,7 @@ import java.io.InputStream;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfRect;
 import org.opencv.core.Size;
+import org.opencv.core.Rect;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.objdetect.CascadeClassifier;
 
@@ -57,11 +58,12 @@ public class Algorithm implements Runnable {
         }
 	}
 	
-	public void putFrame(Mat currentFrame) {
+	public void putFrame(Mat currentFrame, Rect area) {
 		if(hasFrame) {
 			return;
 		}
-		Imgproc.cvtColor(currentFrame, frame, Imgproc.COLOR_RGB2GRAY);
+		Mat part = new Mat(currentFrame, area);
+		Imgproc.cvtColor(part, frame, Imgproc.COLOR_RGB2GRAY);
 		hasFrame = true;
 	}
 	
@@ -86,11 +88,11 @@ public class Algorithm implements Runnable {
 				detector.detectMultiScale(frame, rects, 1.1, 2, 2, new Size(30, 30), new Size());
 			}
 			//activity.onResult(rects.toList().size() != 0);
-			/*if(rects.toList().size() != 0) {
+			if(rects.toList().size() != 0) {
 				Log.d("luxsoft", "has");
 			} else {
 				Log.d("luxsoft", "none");
-			}*/
+			}
 			hasFrame = false;
 		}
 		
