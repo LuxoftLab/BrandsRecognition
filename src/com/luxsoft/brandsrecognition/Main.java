@@ -6,7 +6,6 @@ import com.luxsoft.recognition.R;
 
 import android.os.Bundle;
 import android.app.Activity;
-import android.content.res.Configuration;
 import android.util.Log;
 import android.view.SurfaceView;
 

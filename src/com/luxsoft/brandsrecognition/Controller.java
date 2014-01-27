@@ -78,6 +78,10 @@ public class Controller extends BaseLoaderCallback implements SurfaceHolder.Call
 		}
 	}
 	
+	public void onAlgorithmResult(String msg) {
+		handler.obtainMessage(CameraView.UPDATE_MSG, msg).sendToTarget();
+	}
+	
 	public void onProccesingAreaChanged(Rect area) {
 		recalculateArea();
 		handler.obtainMessage(CameraView.UPDATE_AREA, area).sendToTarget();
@@ -127,10 +131,6 @@ public class Controller extends BaseLoaderCallback implements SurfaceHolder.Call
 	
 	public Size getCameraSize() {
 		return cameraSize;
-	}
-	
-	public Size getSurfaceSize() {
-		return surfaceSize;
 	}
 	
 	private void recalculateArea() {

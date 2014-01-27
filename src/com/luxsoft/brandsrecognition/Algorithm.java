@@ -18,6 +18,10 @@ import android.util.Log;
 
 public class Algorithm implements Runnable {
 	
+	public static final String INIT = "Initialization, please wait...";
+	public static final String WAIT = "Capture logo and wait...";
+	public static final String ACURA = "ACURA";
+	
 	private CascadeClassifier detector;
 	private boolean hasFrame;
 	private Mat frame;
@@ -32,6 +36,7 @@ public class Algorithm implements Runnable {
 	}
 	
 	private void initCascades() {
+		controller.onAlgorithmResult(INIT);
 		frame = new Mat();
 		try {
             // Copy the resource into a temp file so OpenCV can load it
@@ -49,8 +54,6 @@ public class Algorithm implements Runnable {
             is.close();
             os.close();
  
- 
-            // Load the cascade classifier
             detector = new CascadeClassifier(mCascadeFile.getAbsolutePath());
         } catch (Exception e) {
         	detector = null;
@@ -87,10 +90,11 @@ public class Algorithm implements Runnable {
 			if(detector != null) {
 				detector.detectMultiScale(frame, rects, 1.1, 2, 2, new Size(30, 30), new Size());
 			}
-			//activity.onResult(rects.toList().size() != 0);
 			if(rects.toList().size() != 0) {
+				controller.onAlgorithmResult(ACURA);
 				Log.d("luxsoft", "has");
 			} else {
+				controller.onAlgorithmResult(WAIT);
 				Log.d("luxsoft", "none");
 			}
 			hasFrame = false;
