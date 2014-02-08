@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<algo>
+    <node isRoot="true">
+        <node name="ACURA" cascade="cascades/acura.xml"></node>
+        <node name="BMW" cascade="cascades/bmw.xml"></node>
+    </node>
+    <stabilisation neededFrames="6" processedFrames="10"></stabilisation>
+</algo>

@@ -1,30 +1,30 @@
 package com.luxsoft.brandsrecognition;
 
 import java.io.File;
-import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 
 import org.opencv.core.Mat;
-import org.opencv.core.MatOfRect;
-import org.opencv.core.Size;
 import org.opencv.core.Rect;
 import org.opencv.imgproc.Imgproc;
-import org.opencv.objdetect.CascadeClassifier;
-
-import com.luxsoft.recognition.R;
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
 
 import android.content.Context;
+import android.content.res.AssetManager;
 import android.util.Log;
+import android.util.Xml;
 
 public class Algorithm implements Runnable {
 	
 	public static final String INIT = "Initialization, please wait...";
 	public static final String WAIT = "Capture logo and wait...";
-	public static final String ACURA = "ACURA";
+	public static final String ERROR = "Error occurred";
+	/*public static final String ACURA = "ACURA";
 	public static final String BMW = "BMW";
 	
 	private CascadeClassifier detector;
-	private CascadeClassifier bmw;
+	private CascadeClassifier bmw;*/
 	
 	private boolean hasFrame;
 	private Mat frame;
@@ -33,47 +33,30 @@ public class Algorithm implements Runnable {
 	private Context context;
 	private Controller controller;
 	
+	private Cascade detector;
+	
 	public Algorithm(Context context, Controller controller) {
 		this.context = context;
 		this.controller = controller;
+		
 	}
 	
-	private void initCascades() {
+	private void initCascades() throws IOException, XmlPullParserException {
 		controller.onAlgorithmResult(INIT);
 		frame = new Mat();
-		try {
-            // Copy the resource into a temp file so OpenCV can load it
-            InputStream is = context.getResources().openRawResource(R.raw.cascade);
-            File cascadeDir = context.getDir("cascade", Context.MODE_PRIVATE);
-            File mCascadeFile = new File(cascadeDir, "cascade.xml");
-            FileOutputStream os = new FileOutputStream(mCascadeFile);
- 
- 
-            byte[] buffer = new byte[4096];
-            int bytesRead;
-            while ((bytesRead = is.read(buffer)) != -1) {
-                os.write(buffer, 0, bytesRead);
-            }
-            is.close();
-            os.close();
- 
-            detector = new CascadeClassifier(mCascadeFile.getAbsolutePath());
-            
-            is = context.getResources().openRawResource(R.raw.bmw);
-            mCascadeFile = new File(cascadeDir, "bmw.xml");
-            os = new FileOutputStream(mCascadeFile);
-            
-            while ((bytesRead = is.read(buffer)) != -1) {
-                os.write(buffer, 0, bytesRead);
-            }
-            is.close();
-            os.close();
- 
-            bmw = new CascadeClassifier(mCascadeFile.getAbsolutePath());
-        } catch (Exception e) {
-        	detector = null;
-            Log.e("luxsoft", "Error loading cascade", e);
-        }
+		
+		File dir = context.getDir("cascade", Context.MODE_PRIVATE);
+		Log.d("luxsoft", dir.getAbsolutePath());
+		AssetManager assets = context.getAssets();
+		InputStream is = assets.open("cascade_tree.xml");
+		XmlPullParser parser = Xml.newPullParser();
+		parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
+		parser.setInput(is, null);
+		parser.nextTag();
+		parser.nextTag();
+		detector = new Cascade(parser);
+		detector.load(assets, dir);
+		is.close();
 	}
 	
 	public void putFrame(Mat currentFrame, Rect area) {
@@ -91,37 +74,29 @@ public class Algorithm implements Runnable {
 	
 	@Override
 	public void run() {
-		isRunning = true;
 		hasFrame = false;
 		
-		initCascades();
+		try {
+			initCascades();
+			isRunning = true;
+		} catch(Exception e) {
+			//TODO: 
+			controller.onAlgorithmResult(ERROR);
+			Log.e("luxsoft", "loading cascades", e);
+		}
 		
 		while(isRunning) {
 			if(!hasFrame) {
 				continue;
 			}
-			MatOfRect rects = new MatOfRect();
 			
-			if(detector != null) {
-				detector.detectMultiScale(frame, rects, 1.1, 2, 2, new Size(30, 30), new Size());
-			}
-			if(rects.toList().size() != 0) {
-				controller.onAlgorithmResult(ACURA);
-				Log.d("luxsoft", "acura");
+			Cascade result = detector.detectFromChildren(frame);
+			
+			if(result != null) {
+				controller.onAlgorithmResult(result.getName());
 			} else {
-				rects = new MatOfRect();
-				if(bmw != null) {
-					bmw.detectMultiScale(frame, rects, 1.1, 2, 2, new Size(30, 30), new Size());
-				}
-				if(rects.toList().size() != 0) {
-					controller.onAlgorithmResult(BMW);
-					Log.d("luxsoft", "bmw");
-				} else {
-					controller.onAlgorithmResult(WAIT);
-					Log.d("luxsoft", "none");
-				}
+				controller.onAlgorithmResult(WAIT);
 			}
-			
 			
 			hasFrame = false;
 		}
