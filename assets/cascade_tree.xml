@@ -4,5 +4,5 @@
         <node name="ACURA" cascade="cascades/acura.xml"></node>
         <node name="BMW" cascade="cascades/bmw.xml"></node>
     </node>
-    <stabilisation neededFrames="6" processedFrames="10"></stabilisation>
+    <stabilization neededFrames="6" processedFrames="10"></stabilization>
 </algo>

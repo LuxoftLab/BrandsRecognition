@@ -20,11 +20,6 @@ public class Algorithm implements Runnable {
 	public static final String INIT = "Initialization, please wait...";
 	public static final String WAIT = "Capture logo and wait...";
 	public static final String ERROR = "Error occurred";
-	/*public static final String ACURA = "ACURA";
-	public static final String BMW = "BMW";
-	
-	private CascadeClassifier detector;
-	private CascadeClassifier bmw;*/
 	
 	private boolean hasFrame;
 	private Mat frame;
@@ -34,6 +29,7 @@ public class Algorithm implements Runnable {
 	private Controller controller;
 	
 	private Cascade detector;
+	private Stabilizer stabilizer;
 	
 	public Algorithm(Context context, Controller controller) {
 		this.context = context;
@@ -54,8 +50,13 @@ public class Algorithm implements Runnable {
 		parser.setInput(is, null);
 		parser.nextTag();
 		parser.nextTag();
+		
 		detector = new Cascade(parser);
 		detector.load(assets, dir);
+		
+		parser.nextTag();
+		stabilizer = new Stabilizer(parser);
+		
 		is.close();
 	}
 	
@@ -90,10 +91,10 @@ public class Algorithm implements Runnable {
 				continue;
 			}
 			
-			Cascade result = detector.detectFromChildren(frame);
-			
-			if(result != null) {
-				controller.onAlgorithmResult(result.getName());
+			stabilizer.registerResult(detector.detectFromChildren(frame));
+			Cascade stibilized = stabilizer.getMostProbable();
+			if(stibilized != null) {
+				controller.onAlgorithmResult(stibilized.getName());
 			} else {
 				controller.onAlgorithmResult(WAIT);
 			}
