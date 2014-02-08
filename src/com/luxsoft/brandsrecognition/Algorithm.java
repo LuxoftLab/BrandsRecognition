@@ -21,8 +21,11 @@ public class Algorithm implements Runnable {
 	public static final String INIT = "Initialization, please wait...";
 	public static final String WAIT = "Capture logo and wait...";
 	public static final String ACURA = "ACURA";
+	public static final String BMW = "BMW";
 	
 	private CascadeClassifier detector;
+	private CascadeClassifier bmw;
+	
 	private boolean hasFrame;
 	private Mat frame;
 	private boolean isRunning;
@@ -55,6 +58,18 @@ public class Algorithm implements Runnable {
             os.close();
  
             detector = new CascadeClassifier(mCascadeFile.getAbsolutePath());
+            
+            is = context.getResources().openRawResource(R.raw.bmw);
+            mCascadeFile = new File(cascadeDir, "bmw.xml");
+            os = new FileOutputStream(mCascadeFile);
+            
+            while ((bytesRead = is.read(buffer)) != -1) {
+                os.write(buffer, 0, bytesRead);
+            }
+            is.close();
+            os.close();
+ 
+            bmw = new CascadeClassifier(mCascadeFile.getAbsolutePath());
         } catch (Exception e) {
         	detector = null;
             Log.e("luxsoft", "Error loading cascade", e);
@@ -92,11 +107,22 @@ public class Algorithm implements Runnable {
 			}
 			if(rects.toList().size() != 0) {
 				controller.onAlgorithmResult(ACURA);
-				Log.d("luxsoft", "has");
+				Log.d("luxsoft", "acura");
 			} else {
-				controller.onAlgorithmResult(WAIT);
-				Log.d("luxsoft", "none");
+				rects = new MatOfRect();
+				if(bmw != null) {
+					bmw.detectMultiScale(frame, rects, 1.1, 2, 2, new Size(30, 30), new Size());
+				}
+				if(rects.toList().size() != 0) {
+					controller.onAlgorithmResult(BMW);
+					Log.d("luxsoft", "bmw");
+				} else {
+					controller.onAlgorithmResult(WAIT);
+					Log.d("luxsoft", "none");
+				}
 			}
+			
+			
 			hasFrame = false;
 		}
 		
