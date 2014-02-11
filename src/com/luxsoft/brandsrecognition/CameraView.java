@@ -56,7 +56,10 @@ public class CameraView implements Handler.Callback {
 	public void setSurfaceSize(int width, int height) {
 		this.width = width;
 		this.height = height;
-		float scale = ((float)width*height)/(DEFAULT_SCREEN_WIDTH*DEFAULT_SCREEN_HEIGHT);
+		float scale = Math.min(
+				(float)width/DEFAULT_SCREEN_WIDTH, 
+				(float)height/DEFAULT_SCREEN_HEIGHT
+				);
 		borderSize = DEFAULT_BORDER_SIZE*scale;
 		textSize = DEFAULT_TEXT_SIZE*scale;
 		cornerRadius = DEFAULT_CORNER_REDIUS*scale;

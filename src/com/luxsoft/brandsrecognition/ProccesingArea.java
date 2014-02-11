@@ -40,9 +40,9 @@ public class ProccesingArea implements OnTouchListener {
 	}
 	
 	public void setSurfaceSize(int width, int height) {
-		float scale = ((float)width*height)/(CameraView.DEFAULT_SCREEN_WIDTH*CameraView.DEFAULT_SCREEN_HEIGHT);
 		float widthScale = (float)width/CameraView.DEFAULT_SCREEN_WIDTH;
 		float heightScale = (float)height/CameraView.DEFAULT_SCREEN_HEIGHT;
+		float scale = Math.max(widthScale, heightScale);
 		minWidth = (int)(DEFAULT_MIN_WIDTH*widthScale);
 		minHeight = (int)(DEFAULT_MIN_HEIGHT*heightScale);
 		maxWidth = (int)(DEFAULT_MAX_WIDTH*widthScale);

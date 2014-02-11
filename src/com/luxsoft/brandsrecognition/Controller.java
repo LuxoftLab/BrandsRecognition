@@ -139,13 +139,13 @@ public class Controller extends BaseLoaderCallback implements SurfaceHolder.Call
 		if(scale == null || area == null) {
 			return;
 		}
-		int areaWidth = (int) (area.width()*scale);
-		int areaHeight = (int) (area.height()*scale);
+		int areaWidth = (int) (area.width()/scale);
+		int areaHeight = (int) (area.height()/scale);
 		this.area = new org.opencv.core.Rect(
 				(int)(cameraSize.width-areaWidth)/2,
 				(int)(cameraSize.height-areaHeight)/2,
-				(int)(cameraSize.width+areaWidth)/2,
-				(int)(cameraSize.height+areaHeight)/2
+				areaWidth,
+				areaHeight
 				);
 	}
 }
