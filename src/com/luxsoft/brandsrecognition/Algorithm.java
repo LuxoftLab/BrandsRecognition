@@ -3,6 +3,7 @@ package com.luxsoft.brandsrecognition;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.LinkedList;
 
 import org.opencv.core.Mat;
 import org.opencv.core.Rect;
@@ -86,12 +87,14 @@ public class Algorithm implements Runnable {
 			Log.e("luxsoft", "loading cascades", e);
 		}
 		
+		LinkedList<Cascade> results;
 		while(isRunning) {
 			if(!hasFrame) {
 				continue;
 			}
-			
-			stabilizer.registerResult(detector.detectFromChildren(frame));
+			results = new LinkedList<Cascade>();
+			detector.detectFromChildren(frame, results);
+			stabilizer.registerResult(results);
 			Cascade stibilized = stabilizer.getMostProbable();
 			if(stibilized != null) {
 				controller.onAlgorithmResult(stibilized.getName());

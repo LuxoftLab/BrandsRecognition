@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfRect;
@@ -55,27 +56,24 @@ public class Cascade {
 		} 
 	}
 	
-	public Cascade detect(Mat frame) {
+	public void detect(Mat frame, LinkedList<Cascade> result) {
 		MatOfRect rects = new MatOfRect();
 		if(detector != null) {
 			detector.detectMultiScale(frame, rects, 1.1, 2, 2, new Size(30, 30), new Size());
 		}
-		if(rects.toList().size() == 0) {
-			return null;
+		if(rects.toList().size() != 0) {
+			if(children.size() == 0) {
+				result.add(this);
+			} else {
+				detectFromChildren(frame, result);
+			}
 		}
-		if(children.size() != 0) {
-			return detectFromChildren(frame);
-		}
-		return this;
 	}
 	
-	public Cascade detectFromChildren(Mat frame) {
+	public void detectFromChildren(Mat frame, LinkedList<Cascade> result) {
 		for(Cascade child : children) {
-			if(child.detect(frame) != null) {
-				return child;
-			}
+			child.detect(frame, result);
 		} 
-		return null;
 	}
 	
 	public String getName() {
