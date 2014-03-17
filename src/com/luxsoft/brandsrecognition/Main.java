@@ -1,5 +1,7 @@
 package com.luxsoft.brandsrecognition;
 
+import java.io.File;
+
 import org.opencv.android.OpenCVLoader;
 
 import com.luxsoft.recognition.R;
@@ -11,11 +13,15 @@ import android.view.SurfaceView;
 
 public class Main extends Activity {
 
+	public static File CACHE_DIR;
+	
 	private Controller controller;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		CACHE_DIR = getApplicationContext().getExternalCacheDir();
 		Log.d("lifecycle", "created");
 		setContentView(R.layout.activity_main);
 		

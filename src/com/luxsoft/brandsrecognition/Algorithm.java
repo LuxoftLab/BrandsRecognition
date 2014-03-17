@@ -1,6 +1,7 @@
 package com.luxsoft.brandsrecognition;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.LinkedList;
@@ -11,8 +12,6 @@ import org.opencv.imgproc.Imgproc;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
-import android.content.Context;
-import android.content.res.AssetManager;
 import android.util.Log;
 import android.util.Xml;
 
@@ -26,14 +25,12 @@ public class Algorithm implements Runnable {
 	private Mat frame;
 	private boolean isRunning;
 	
-	private Context context;
 	private Controller controller;
 	
 	private Cascade detector;
 	private Stabilizer stabilizer;
 	
-	public Algorithm(Context context, Controller controller) {
-		this.context = context;
+	public Algorithm(Controller controller) {
 		this.controller = controller;
 		
 	}
@@ -42,10 +39,7 @@ public class Algorithm implements Runnable {
 		controller.onAlgorithmResult(INIT);
 		frame = new Mat();
 		
-		File dir = context.getDir("cascade", Context.MODE_PRIVATE);
-		Log.d("luxsoft", dir.getAbsolutePath());
-		AssetManager assets = context.getAssets();
-		InputStream is = assets.open("cascade_tree.xml");
+		InputStream is = new FileInputStream(new File(Main.CACHE_DIR, "cascade_tree.xml"));
 		XmlPullParser parser = Xml.newPullParser();
 		parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
 		parser.setInput(is, null);
@@ -53,7 +47,7 @@ public class Algorithm implements Runnable {
 		parser.nextTag();
 		
 		detector = new Cascade(parser);
-		detector.load(assets, dir);
+		detector.load();
 		
 		parser.nextTag();
 		stabilizer = new Stabilizer(parser);
@@ -84,7 +78,7 @@ public class Algorithm implements Runnable {
 		} catch(Exception e) {
 			//TODO: 
 			controller.onAlgorithmResult(ERROR);
-			Log.e("luxsoft", "loading cascades", e);
+			Log.e("luxsoft", "loading cascades:" + e.getMessage(), e);
 		}
 		
 		LinkedList<Cascade> results;

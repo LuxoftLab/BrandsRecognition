@@ -1,9 +1,7 @@
 package com.luxsoft.brandsrecognition;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
@@ -13,8 +11,6 @@ import org.opencv.core.Size;
 import org.opencv.objdetect.CascadeClassifier;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
-
-import android.content.res.AssetManager;
 
 public class Cascade {
 	
@@ -35,24 +31,16 @@ public class Cascade {
 		}
 	}
 	
-	public void load(AssetManager assets, File dir) throws IOException {
+	public void load() throws IOException {
 		if(name != null) {
-			InputStream is = assets.open(cascade);
-            File mCascadeFile = new File(dir, cascade.replace('/', '_'));
-            FileOutputStream os = new FileOutputStream(mCascadeFile);
- 
-            byte[] buffer = new byte[4096];
-            int bytesRead;
-            while ((bytesRead = is.read(buffer)) != -1) {
-                os.write(buffer, 0, bytesRead);
-            }
-            is.close();
-            os.close();
- 
-            detector = new CascadeClassifier(mCascadeFile.getAbsolutePath());
+			File f = new File(Main.CACHE_DIR, cascade);
+			if(!f.exists()) {
+				throw new IOException(name+" not exsits");
+			}
+			detector = new CascadeClassifier(f.getAbsolutePath());
 		}
 		for(Cascade child : children) {
-			child.load(assets, dir);
+			child.load();
 		} 
 	}
 	

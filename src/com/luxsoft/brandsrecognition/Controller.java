@@ -32,7 +32,7 @@ public class Controller extends BaseLoaderCallback implements SurfaceHolder.Call
 		
 		cameraView = new CameraView(holder, this);
 		camera = new CameraCapture(this);
-		algo = new Algorithm(context, this);
+		algo = new Algorithm(this);
 		processingArea = new ProccesingArea(this);
 		
 		handler = new Handler(context.getMainLooper(), cameraView);
