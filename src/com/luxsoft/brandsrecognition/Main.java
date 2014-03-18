@@ -8,12 +8,14 @@ import com.luxsoft.recognition.R;
 
 import android.os.Bundle;
 import android.app.Activity;
+import android.content.Context;
 import android.util.Log;
 import android.view.SurfaceView;
 
 public class Main extends Activity {
 
 	public static File CACHE_DIR;
+	private static Context context;
 	
 	private Controller controller;
 	
@@ -21,7 +23,9 @@ public class Main extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		CACHE_DIR = getApplicationContext().getExternalCacheDir();
+		context = getApplicationContext();
+		openCacheDir();
+		
 		Log.d("lifecycle", "created");
 		setContentView(R.layout.activity_main);
 		
@@ -43,6 +47,10 @@ public class Main extends Activity {
 		super.onResume();
 		controller.resume();
 		Log.d("lifecycle", "resumed");
+	}
+	
+	public static void openCacheDir() {
+		CACHE_DIR = context.getExternalCacheDir();
 	}
 
 }

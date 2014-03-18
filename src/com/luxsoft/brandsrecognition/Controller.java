@@ -5,7 +5,7 @@ import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.core.Mat;
 import org.opencv.core.Size;
 
-import android.content.Context;
+import android.app.Activity;
 import android.graphics.Rect;
 import android.os.Handler;
 import android.util.Log;
@@ -17,6 +17,7 @@ public class Controller extends BaseLoaderCallback implements SurfaceHolder.Call
 	private CameraView cameraView;
 	private CameraCapture camera;
 	private Algorithm algo;
+	private Cache cache;
 	private ProccesingArea processingArea;
 	private Handler handler;
 	private boolean opencvLoaded;
@@ -25,17 +26,18 @@ public class Controller extends BaseLoaderCallback implements SurfaceHolder.Call
 	private Size surfaceSize;
 	private org.opencv.core.Rect area;
 	
-	public Controller(Context context, SurfaceView surface) {
-		super(context);
+	public Controller(Activity activity, SurfaceView surface) {
+		super(activity);
 		SurfaceHolder holder = surface.getHolder();
 		holder.addCallback(this);
 		
 		cameraView = new CameraView(holder, this);
 		camera = new CameraCapture(this);
-		algo = new Algorithm(this);
+		cache = new Cache(activity);
+		algo = new Algorithm(this, cache);
 		processingArea = new ProccesingArea(this);
 		
-		handler = new Handler(context.getMainLooper(), cameraView);
+		handler = new Handler(activity.getMainLooper(), cameraView);
 		surface.setOnTouchListener(processingArea);
 		
 		opencvLoaded = false;

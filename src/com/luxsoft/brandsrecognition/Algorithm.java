@@ -20,25 +20,36 @@ public class Algorithm implements Runnable {
 	public static final String INIT = "Initialization, please wait...";
 	public static final String WAIT = "Capture logo and wait...";
 	public static final String ERROR = "Error occurred";
+	public static final String LOAD = "Loading cache, please wait...";
 	
 	private boolean hasFrame;
 	private Mat frame;
 	private boolean isRunning;
+	private boolean isLoading;
 	
 	private Controller controller;
+	private Cache cache;
 	
 	private Cascade detector;
 	private Stabilizer stabilizer;
 	
-	public Algorithm(Controller controller) {
+	public Algorithm(Controller controller, Cache cache) {
 		this.controller = controller;
-		
+		this.cache = cache;
+		isRunning = false;
+		isLoading = false;
 	}
 	
 	private void initCascades() throws IOException, XmlPullParserException {
-		controller.onAlgorithmResult(INIT);
+		if(isLoading) {
+			return;
+		}
+		controller.onAlgorithmResult(LOAD);
 		frame = new Mat();
 		
+		cache.update();
+		
+		controller.onAlgorithmResult(INIT);
 		InputStream is = new FileInputStream(new File(Main.CACHE_DIR, "cascade_tree.xml"));
 		XmlPullParser parser = Xml.newPullParser();
 		parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
@@ -53,10 +64,11 @@ public class Algorithm implements Runnable {
 		stabilizer = new Stabilizer(parser);
 		
 		is.close();
+		isLoading = true;
 	}
 	
 	public void putFrame(Mat currentFrame, Rect area) {
-		if(hasFrame) {
+		if(hasFrame || !isRunning) {
 			return;
 		}
 		Mat part = new Mat(currentFrame, area);
