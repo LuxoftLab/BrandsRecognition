@@ -4,6 +4,7 @@ import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.core.Mat;
 import org.opencv.core.Size;
+import org.opencv.imgproc.Imgproc;
 
 import android.app.Activity;
 import android.graphics.Rect;
@@ -25,6 +26,11 @@ public class Controller extends BaseLoaderCallback implements SurfaceHolder.Call
 	private Size cameraSize;
 	private Size surfaceSize;
 	private org.opencv.core.Rect area;
+	
+	private boolean showCanny;
+	private boolean blur;
+	private int thresholdMin = 100;
+	private int thresholdMax = 150;
 	
 	public Controller(Activity activity, SurfaceView surface) {
 		super(activity);
@@ -52,6 +58,8 @@ public class Controller extends BaseLoaderCallback implements SurfaceHolder.Call
 	}
 	
 	public void resume() {
+		showCanny = false;
+		blur = false;
 		startThreads();
 	}
 	
@@ -73,10 +81,35 @@ public class Controller extends BaseLoaderCallback implements SurfaceHolder.Call
 		startThreads();
 	}
 	
+	public void toogleShowCanny() {
+		showCanny = !showCanny;
+	}
+	
+	public void setBlur(boolean f) {
+		blur = f;
+	}
+	
+	public void setThreshold(int min, int max) {
+		thresholdMin = min;
+		thresholdMax = max;
+	}
+	
 	public void onFrame(Mat frame) {
-		handler.obtainMessage(CameraView.UPDATE_FRAME, frame).sendToTarget();
+		Mat frame_gray = new Mat();
+		Imgproc.cvtColor(frame, frame_gray, Imgproc.COLOR_RGB2GRAY);
+		Imgproc.equalizeHist(frame_gray, frame_gray);
+		if(blur) {
+			Imgproc.blur(frame_gray, frame_gray, new Size(3, 3));
+		}
+		Imgproc.Canny(frame_gray, frame_gray, thresholdMin, thresholdMax, 3, true);
+		if(showCanny) {
+			handler.obtainMessage(CameraView.UPDATE_FRAME, frame_gray).sendToTarget();
+		} else {
+			handler.obtainMessage(CameraView.UPDATE_FRAME, frame).sendToTarget();
+		}
+
 		if(area != null) {
-			algo.putFrame(frame, area);
+			algo.putFrame(frame_gray, area);
 		}
 	}
 	

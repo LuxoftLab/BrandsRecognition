@@ -72,7 +72,6 @@ public class Algorithm implements Runnable {
 			return;
 		}
 		Mat part = new Mat(currentFrame, area);
-		Imgproc.cvtColor(part, frame, Imgproc.COLOR_RGB2GRAY);
 		hasFrame = true;
 	}
 	

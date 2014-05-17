@@ -1,8 +1,22 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <item
-        android:id="@+id/action_settings"
-        android:orderInCategory="100"
-        android:title="@string/action_settings"/>
+        android:id="@+id/toogleCanny"
+        android:title="toogleCanny"/>
+    
+    <item
+        android:id="@+id/threshold"
+        android:title="setThreshold"/>
+    
+    <item
+        android:id="@+id/blurOff"
+        android:icon="@android:drawable/button_onoff_indicator_off"
+        android:title="blurOff"/>
 
+    <item
+        android:id="@+id/blurOn"
+        android:icon="@android:drawable/button_onoff_indicator_on"
+        android:title="blurOn"
+        android:visible="false"/>
+    
 </menu>

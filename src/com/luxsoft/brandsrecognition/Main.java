@@ -8,16 +8,24 @@ import com.luxsoft.recognition.R;
 
 import android.os.Bundle;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.SurfaceView;
+import android.widget.EditText;
 
-public class Main extends Activity {
+public class Main extends Activity implements DialogInterface.OnClickListener {
 
 	public static File CACHE_DIR;
 	private static Context context;
 	
 	private Controller controller;
+	private Menu menu;
+	private AlertDialog dialog;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -29,10 +37,50 @@ public class Main extends Activity {
 		Log.d("lifecycle", "created");
 		setContentView(R.layout.activity_main);
 		
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		
+		builder.setMessage("Threshold values");
+		builder.setView(getLayoutInflater().inflate(R.layout.dialog, null));
+		builder.setPositiveButton("Apply", this);
+		
+		dialog = builder.create();
+		
 		SurfaceView surface = (SurfaceView) findViewById(R.id.surface);
 		
 		controller = new Controller(this, surface);
 		OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_2_4_3, this, controller);
+	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		this.menu = menu;
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.main, menu);
+		return true;
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		int id = item.getItemId();
+		switch(id) {
+		case R.id.toogleCanny:
+			controller.toogleShowCanny();
+			break;
+		case R.id.blurOn:
+			controller.setBlur(false);
+			item.setVisible(false);
+			menu.findItem(R.id.blurOff).setVisible(true);
+			break;
+		case R.id.blurOff:
+			controller.setBlur(true);
+			item.setVisible(false);
+			menu.findItem(R.id.blurOn).setVisible(true);
+			break;
+		case R.id.threshold:
+			dialog.show();
+			break;
+		}
+		return super.onOptionsItemSelected(item);
 	}
 	
 	@Override
@@ -51,6 +99,13 @@ public class Main extends Activity {
 	
 	public static void openCacheDir() {
 		CACHE_DIR = context.getExternalCacheDir();
+	}
+
+	@Override
+	public void onClick(DialogInterface d, int which) {
+		int min = Integer.parseInt(((EditText)dialog.findViewById(R.id.min)).getText().toString());
+		int max = Integer.parseInt(((EditText)dialog.findViewById(R.id.max)).getText().toString());
+		controller.setThreshold(min, max);
 	}
 
 }
