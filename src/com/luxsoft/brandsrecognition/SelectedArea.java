@@ -6,8 +6,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 
-public class ProccesingArea implements OnTouchListener {
-	
+public class SelectedArea implements OnTouchListener {
+
 	private static final int DEFAULT_MIN_WIDTH = 200;
 	private static final int DEFAULT_MIN_HEIGHT = 150;
 	private static final int DEFAULT_MAX_WIDTH = 600;
@@ -26,20 +26,16 @@ public class ProccesingArea implements OnTouchListener {
 	private int maxWidth, maxHeight;
 	private int cornerRadius, borderSize;
 	
-	private Controller controller;
-	private Rect area;
-	private Rect surface;
+	private Rect area, surface;
 	
 	private Point lastTouch;
 	private int action;
 	
-	public ProccesingArea(Controller controller) {
-		this.controller = controller;
-		area = null;
-		surface = null;
-	}
+	private CameraView view;
 	
-	public void setSurfaceSize(int width, int height) {
+	public SelectedArea(CameraView view, int width, int height) {
+		surface = new Rect(0, 0, width, height);
+		this.view = view;
 		float widthScale = (float)width/CameraView.DEFAULT_SCREEN_WIDTH;
 		float heightScale = (float)height/CameraView.DEFAULT_SCREEN_HEIGHT;
 		float scale = Math.max(widthScale, heightScale);
@@ -49,26 +45,12 @@ public class ProccesingArea implements OnTouchListener {
 		maxHeight = (int)(DEFAULT_MAX_HEIGHT*heightScale);
 		cornerRadius = (int)(DEFAULT_CORNER_REDIUS*scale);
 		borderSize = (int)(DEFAULT_BORDER_SIZE*scale);
-		
-		surface = new Rect(0, 0, width, height);
-		
-		if(area == null) {
-			area = new Rect(
-					(width - (maxWidth-minWidth))/2,
-					(height - (maxHeight-minHeight))/2,
-					(width + (maxWidth-minWidth))/2,
-					(height + (maxHeight-minHeight))/2
-			);
-		} else {
-			int areaWidth = area.width();
-			int areaHeight = area.height();
-			area.left = (width-areaWidth)/2;
-			area.top = (height-areaHeight)/2;
-			area.right = (width+areaWidth)/2;
-			area.bottom = (height+areaHeight)/2;
-			checkAreaSize();
-		}
-		controller.onProccesingAreaChanged(area);
+		area = new Rect(
+				(width - (maxWidth-minWidth))/2,
+				(height - (maxHeight-minHeight))/2,
+				(width + (maxWidth-minWidth))/2,
+				(height + (maxHeight-minHeight))/2
+		);
 	}
 	
 	private void onDown(MotionEvent event) {
@@ -152,11 +134,12 @@ public class ProccesingArea implements OnTouchListener {
 			area.top -= dy;
 		}
 		checkAreaSize();
-		controller.onProccesingAreaChanged(area);
+		view.onAreaChanged(false);
 	}
 	
 	private void onUp(MotionEvent event) {
 		lastTouch = null;
+		view.onAreaChanged(true);
 	}
 	
 	@Override
@@ -174,7 +157,7 @@ public class ProccesingArea implements OnTouchListener {
 		}
 		return true;
 	}
-	
+
 	private void checkAreaSize() {
 		if(area.width() < minWidth) {
 			area.left = (surface.width() - minWidth)/2;
@@ -199,5 +182,4 @@ public class ProccesingArea implements OnTouchListener {
 	public Rect getArea() {
 		return area;
 	}
-
 }

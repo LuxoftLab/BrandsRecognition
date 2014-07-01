@@ -19,4 +19,8 @@
         android:title="blurOn"
         android:visible="false"/>
     
+    <item
+        android:id="@+id/saveImage"
+        android:title="Save"/>
+    
 </menu>

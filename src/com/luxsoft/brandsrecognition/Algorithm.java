@@ -2,16 +2,20 @@ package com.luxsoft.brandsrecognition;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.LinkedList;
 
+import org.opencv.android.Utils;
 import org.opencv.core.Mat;
 import org.opencv.core.Rect;
 import org.opencv.imgproc.Imgproc;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
+import android.graphics.Bitmap;
 import android.util.Log;
 import android.util.Xml;
 
@@ -32,6 +36,8 @@ public class Algorithm implements Runnable {
 	
 	private Cascade detector;
 	private Stabilizer stabilizer;
+	
+	private boolean save = false;
 	
 	public Algorithm(Controller controller, Cache cache) {
 		this.controller = controller;
@@ -72,6 +78,24 @@ public class Algorithm implements Runnable {
 			return;
 		}
 		Mat part = new Mat(currentFrame, area);
+		if(save) {
+			Bitmap frame = Bitmap.createBitmap(part.cols(), part.rows(), Bitmap.Config.ARGB_8888);
+			Utils.matToBitmap(part, frame);
+			File file = new File(Main.CACHE_DIR, "img.png");
+			try {
+				FileOutputStream out = new FileOutputStream(file);
+				frame.compress(Bitmap.CompressFormat.PNG, 50, out);
+				out.flush();
+				out.close();
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			save = false;
+		}
 		hasFrame = true;
 	}
 	
@@ -110,6 +134,10 @@ public class Algorithm implements Runnable {
 			hasFrame = false;
 		}
 		
+	}
+	
+	public void saveImage() {
+		save = true;
 	}
 
 }

@@ -22,8 +22,8 @@ containing a value of this type.
 <colgroup align="left" />
 <tr><th>Constant</th><th>Value</th><th>Description</th></tr>
 <tr><td><code>any</code></td><td>-1</td><td></td></tr>
-<tr><td><code>back</code></td><td>99</td><td></td></tr>
-<tr><td><code>front</code></td><td>98</td><td></td></tr>
+<tr><td><code>back</code></td><td>0</td><td></td></tr>
+<tr><td><code>front</code></td><td>1</td><td></td></tr>
 </table>
          */
         public static final int camera_id=0x7f010001;
@@ -55,9 +55,10 @@ containing a value of this type.
         public static final int blurOff=0x7f04000a;
         public static final int blurOn=0x7f04000b;
         public static final int front=0x7f040002;
+        public static final int java_surface_view=0x7f040003;
         public static final int max=0x7f040007;
         public static final int min=0x7f040005;
-        public static final int surface=0x7f040003;
+        public static final int saveImage=0x7f04000c;
         public static final int textView1=0x7f040004;
         public static final int textView2=0x7f040006;
         public static final int threshold=0x7f040009;
@@ -126,8 +127,8 @@ containing a value of this type.
 <colgroup align="left" />
 <tr><th>Constant</th><th>Value</th><th>Description</th></tr>
 <tr><td><code>any</code></td><td>-1</td><td></td></tr>
-<tr><td><code>back</code></td><td>99</td><td></td></tr>
-<tr><td><code>front</code></td><td>98</td><td></td></tr>
+<tr><td><code>back</code></td><td>0</td><td></td></tr>
+<tr><td><code>front</code></td><td>1</td><td></td></tr>
 </table>
           @attr name com.luxsoft.recognition:camera_id
         */

@@ -12,6 +12,8 @@ import org.opencv.objdetect.CascadeClassifier;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
+import android.util.Log;
+
 public class Cascade {
 	
 	private ArrayList<Cascade> children;
