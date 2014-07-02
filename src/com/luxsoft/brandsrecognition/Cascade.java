@@ -7,6 +7,7 @@ import java.util.LinkedList;
 
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfRect;
+import org.opencv.core.Rect;
 import org.opencv.core.Size;
 import org.opencv.objdetect.CascadeClassifier;
 import org.xmlpull.v1.XmlPullParser;
@@ -46,23 +47,26 @@ public class Cascade {
 		} 
 	}
 	
-	public void detect(Mat frame, LinkedList<Cascade> result) {
-		MatOfRect rects = new MatOfRect();
+	public void detect(Mat frame, LinkedList<Cascade> result, LinkedList<Rect> rects) {
+		MatOfRect _rects = new MatOfRect();
 		if(detector != null) {
-			detector.detectMultiScale(frame, rects, 1.1, 2, 2, new Size(30, 30), new Size());
+			detector.detectMultiScale(frame, _rects, 1.1, 2, 2, new Size(30, 30), new Size());
 		}
-		if(rects.toList().size() != 0) {
+		if(_rects.toList().size() != 0) {
 			if(children.size() == 0) {
+				for(Rect r : _rects.toList()) {
+					rects.add(r);
+				}
 				result.add(this);
 			} else {
-				detectFromChildren(frame, result);
+				detectFromChildren(frame, result, rects);
 			}
 		}
 	}
 	
-	public void detectFromChildren(Mat frame, LinkedList<Cascade> result) {
+	public void detectFromChildren(Mat frame, LinkedList<Cascade> result, LinkedList<Rect> rects) {
 		for(Cascade child : children) {
-			child.detect(frame, result);
+			child.detect(frame, result, rects);
 		} 
 	}
 	

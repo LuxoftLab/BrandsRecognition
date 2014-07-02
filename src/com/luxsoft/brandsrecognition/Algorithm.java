@@ -118,12 +118,15 @@ public class Algorithm implements Runnable {
 		}
 		
 		LinkedList<Cascade> results;
+		LinkedList<Rect> rects;
 		while(isRunning) {
 			if(!hasFrame) {
 				continue;
 			}
 			results = new LinkedList<Cascade>();
-			detector.detectFromChildren(frame, results);
+			rects = new LinkedList<Rect>();
+			detector.detectFromChildren(frame, results, rects);
+			controller.setRects(rects);
 			stabilizer.registerResult(results);
 			Cascade stibilized = stabilizer.getMostProbable();
 			if(stibilized != null) {

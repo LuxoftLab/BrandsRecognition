@@ -1,8 +1,13 @@
 package com.luxsoft.brandsrecognition;
 
+import java.util.LinkedList;
+
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.LoaderCallbackInterface;
+import org.opencv.core.Core;
 import org.opencv.core.Mat;
+import org.opencv.core.Point;
+import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
@@ -130,6 +135,17 @@ public class Controller extends BaseLoaderCallback implements CameraListener {
 		if(area != null) {
 			algo.putFrame(frame_gray, area);
 		}
+		if(rects != null) {
+			Log.d("luxsoft", "rects: "+rects.size());
+			for(org.opencv.core.Rect r : rects) {
+				Log.d("luxsoft", "rects: "+r.x+" "+r.y+" "+r.width+" "+r.height);
+				Core.rectangle(result, new Point(input.cols()/2-r.x/2, input.rows()/2-r.y/2), new Point(input.cols()/2+(r.x+r.width)/2, input.rows()/2+(r.y+r.height)/2), new Scalar(255, 0, 0));
+			}
+		}
 		return result;
+	}
+	LinkedList<org.opencv.core.Rect> rects;
+	public void setRects(LinkedList<org.opencv.core.Rect> r) {
+		rects = r;
 	}
 }
