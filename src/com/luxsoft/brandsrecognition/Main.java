@@ -1,15 +1,8 @@
 package com.luxsoft.brandsrecognition;
 
 import java.io.File;
-import java.util.List;
 
-import org.opencv.android.JavaCameraView;
 import org.opencv.android.OpenCVLoader;
-import org.opencv.core.CvType;
-import org.opencv.core.Mat;
-import org.opencv.core.Scalar;
-import org.opencv.highgui.Highgui;
-import org.opencv.imgproc.Imgproc;
 
 import com.luxsoft.recognition.R;
 
@@ -18,19 +11,13 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.ImageFormat;
-import android.hardware.Camera;
-import android.hardware.Camera.AutoFocusCallback;
-import android.hardware.Camera.PreviewCallback;
 import android.hardware.Camera.Size;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.SurfaceView;
-import android.view.ViewGroup.LayoutParams;
 import android.widget.EditText;
-import android.widget.TextView;
 
 public class Main extends Activity implements DialogInterface.OnClickListener {
 

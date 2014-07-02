@@ -20,6 +20,7 @@ import android.util.Log;
 
 public class Cache {
 	
+	private final static String FILE_PATH = "cascade_tree.xml";
 	private final static String REMOUT_FILE = "cache/cache.zip";
 	private final static String FILE_URL = 
 			"https://github.com/gorz/BrandsRecognition/raw/master/"+REMOUT_FILE;
@@ -38,7 +39,10 @@ public class Cache {
 		String currentCommit = getCurrentCommit();
 		Log.d("cache", lastCommit + " " + currentCommit);
 		if(currentCommit == null || currentCommit.equals(lastCommit)) {
-			return;
+			File file = new File(Main.CACHE_DIR, FILE_PATH);
+			if(file.exists()) {
+				return;
+			}
 		}
 		if(download()) {
 			updateLastCommit(currentCommit);

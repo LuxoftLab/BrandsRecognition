@@ -1,8 +1,6 @@
 package com.luxsoft.brandsrecognition;
 
 import org.opencv.android.BaseLoaderCallback;
-import org.opencv.android.CameraBridgeViewBase.CvCameraViewListener;
-import org.opencv.android.JavaCameraView;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.core.Mat;
 import org.opencv.core.Size;
@@ -14,8 +12,6 @@ import android.app.Activity;
 import android.graphics.Rect;
 import android.os.Handler;
 import android.util.Log;
-import android.view.SurfaceHolder;
-import android.view.SurfaceView;
 
 public class Controller extends BaseLoaderCallback implements CameraListener {
 	
@@ -32,11 +28,9 @@ public class Controller extends BaseLoaderCallback implements CameraListener {
 	private boolean blur;
 	private int thresholdMin = 100;
 	private int thresholdMax = 150;
-	private Main m;
 	
 	public Controller(Activity activity, CameraView view) {
 		super(activity);
-		m = (Main)activity;
 		cameraView = view;
 		cache = new Cache(activity);
 		algo = new Algorithm(this, cache);

@@ -11,7 +11,6 @@ import java.util.LinkedList;
 import org.opencv.android.Utils;
 import org.opencv.core.Mat;
 import org.opencv.core.Rect;
-import org.opencv.imgproc.Imgproc;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -77,7 +76,8 @@ public class Algorithm implements Runnable {
 		if(hasFrame || !isRunning) {
 			return;
 		}
-		Mat part = new Mat(currentFrame, area);
+		frame = new Mat(currentFrame, area);
+		Mat part = frame;
 		if(save) {
 			Bitmap frame = Bitmap.createBitmap(part.cols(), part.rows(), Bitmap.Config.ARGB_8888);
 			Utils.matToBitmap(part, frame);
@@ -96,6 +96,7 @@ public class Algorithm implements Runnable {
 			}
 			save = false;
 		}
+		
 		hasFrame = true;
 	}
 	
