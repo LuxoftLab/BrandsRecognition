@@ -55,20 +55,20 @@ public class Algorithm implements Runnable {
 		cache.update();
 		
 		controller.onAlgorithmResult(INIT);
-		InputStream is = new FileInputStream(new File(Main.CACHE_DIR, "cascade_tree.xml"));
-		XmlPullParser parser = Xml.newPullParser();
-		parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
-		parser.setInput(is, null);
-		parser.nextTag();
-		parser.nextTag();
+		//InputStream is = new FileInputStream(new File(Main.CACHE_DIR, "cascade_tree.xml"));
+		//XmlPullParser parser = Xml.newPullParser();
+		//parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
+		//parser.setInput(is, null);
+		//parser.nextTag();
+		//parser.nextTag();
 		
-		detector = new Cascade(parser);
+		detector = new Cascade(Main.DIR);
 		detector.load();
 		
-		parser.nextTag();
-		stabilizer = new Stabilizer(parser);
-		
-		is.close();
+		//parser.nextTag();
+		//stabilizer = new Stabilizer(parser);
+		stabilizer = new Stabilizer(null);
+		//is.close();
 		isLoading = true;
 	}
 	

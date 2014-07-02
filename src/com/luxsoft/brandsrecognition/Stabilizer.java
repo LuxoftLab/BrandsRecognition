@@ -19,11 +19,12 @@ public class Stabilizer {
 	private HashMap<Cascade, Integer> amountOfRepeats;
 	
 	public Stabilizer(XmlPullParser parser) throws XmlPullParserException, IOException {
-		processedFrames = Integer.valueOf(
-				parser.getAttributeValue(null, "processedFrames"));
-		neededFrames = Integer.valueOf(parser.getAttributeValue(null, "neededFrames"));
-		parser.nextTag();
-		
+		//processedFrames = Integer.valueOf(
+		//		parser.getAttributeValue(null, "processedFrames"));
+		//neededFrames = Integer.valueOf(parser.getAttributeValue(null, "neededFrames"));
+		//parser.nextTag();
+		processedFrames = 10;
+		neededFrames = 6;
 		queue = new LinkedList<LinkedList<Cascade>>();
 		amountOfRepeats = new HashMap<Cascade, Integer>();
 	}

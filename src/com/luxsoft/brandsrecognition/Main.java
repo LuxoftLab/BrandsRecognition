@@ -7,6 +7,7 @@ import org.opencv.android.OpenCVLoader;
 import com.luxsoft.recognition.R;
 
 import android.os.Bundle;
+import android.os.Environment;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -21,7 +22,7 @@ import android.widget.EditText;
 
 public class Main extends Activity implements DialogInterface.OnClickListener {
 
-	public static File CACHE_DIR;
+	public static File CACHE_DIR, DIR;
 	private static Context context;
 	
 	private Controller controller;
@@ -107,6 +108,10 @@ public class Main extends Activity implements DialogInterface.OnClickListener {
 	
 	public static void openCacheDir() {
 		CACHE_DIR = context.getExternalCacheDir();
+		DIR = new File(Environment.getExternalStorageDirectory(), "cascades");
+		if(!DIR.exists()) {
+			DIR.mkdir();
+		}
 	}
 
 	@Override

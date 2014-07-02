@@ -192,7 +192,16 @@ public class CameraView extends JavaCameraView implements Handler.Callback, CvCa
 			ListItemAccessor accessor, int surfaceWidth, int surfaceHeight) {
 		Log.d(TAG, "calculateCameraFrameSize");
 		List<android.hardware.Camera.Size> s = (List<android.hardware.Camera.Size>) sizes;
-        return new Size(s.get(0).width, s.get(0).height);
+		int max = 0, i=0, imax=-1;
+		for(android.hardware.Camera.Size _s : s) {
+			if(_s.width > max) {
+				max = _s.width;
+				imax = i;
+			}
+			i++;
+		}
+		Log.d(TAG, "calculateCameraFrameSize: "+imax + " " + max);
+        return new Size(s.get(imax).width, s.get(imax).height);
 	}
 	
 	public float getScale() {

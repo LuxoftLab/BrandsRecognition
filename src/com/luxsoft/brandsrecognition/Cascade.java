@@ -21,9 +21,9 @@ public class Cascade {
 	private String name, cascade;
 	private CascadeClassifier detector;
 	
-	public Cascade(XmlPullParser parser) throws XmlPullParserException, IOException {
+	public Cascade(File file) throws XmlPullParserException, IOException {
 		children = new ArrayList<Cascade>();
-		if(!Boolean.valueOf(parser.getAttributeValue(null, "isRoot"))) {
+		/*if(!Boolean.valueOf(parser.getAttributeValue(null, "isRoot"))) {
 			name = parser.getAttributeValue(null, "name");
 			cascade = parser.getAttributeValue(null, "cascade");
 		}
@@ -31,12 +31,21 @@ public class Cascade {
 		while(parser.getEventType() != XmlPullParser.END_TAG) {
 			children.add(new Cascade(parser));
 			parser.nextTag();
+		}*/
+		if(file.isDirectory()) {
+			File[] files = file.listFiles();
+			for(File f : files) {
+				children.add(new Cascade(f));
+			}
+		} else {
+			name = file.getName();
 		}
 	}
 	
 	public void load() throws IOException {
 		if(name != null) {
-			File f = new File(Main.CACHE_DIR, cascade);
+			//File f = new File(Main.CACHE_DIR, cascade);
+			File f = new File(Main.DIR, name);
 			if(!f.exists()) {
 				throw new IOException(name+" not exsits");
 			}
