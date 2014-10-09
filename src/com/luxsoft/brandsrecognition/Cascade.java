@@ -22,6 +22,7 @@ public class Cascade {
 	private CascadeClassifier detector;
 	
 	public Cascade(File file) throws XmlPullParserException, IOException {
+		Log.d("cascade", file.getAbsolutePath());
 		children = new ArrayList<Cascade>();
 		/*if(!Boolean.valueOf(parser.getAttributeValue(null, "isRoot"))) {
 			name = parser.getAttributeValue(null, "name");
@@ -35,11 +36,14 @@ public class Cascade {
 		if(file.isDirectory()) {
 			File[] files = file.listFiles();
 			for(File f : files) {
+				Log.d("cascade", file.getName());
 				children.add(new Cascade(f));
 			}
 		} else {
+			Log.d("cascade", file.getName());
 			name = file.getName();
 		}
+		
 	}
 	
 	public void load() throws IOException {
@@ -59,7 +63,9 @@ public class Cascade {
 	public void detect(Mat frame, LinkedList<Cascade> result, LinkedList<Rect> rects) {
 		MatOfRect _rects = new MatOfRect();
 		if(detector != null) {
+			Log.d("algorun", "before opencv detect");
 			detector.detectMultiScale(frame, _rects, 1.1, 2, 2, new Size(30, 30), new Size());
+			Log.d("algorun", "after opencv detect");
 		}
 		if(_rects.toList().size() != 0) {
 			if(children.size() == 0) {

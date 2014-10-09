@@ -136,7 +136,15 @@ public class CameraView extends JavaCameraView implements Handler.Callback, CvCa
     			float y = rect.bottom + textSize;
     			canvas.drawText(message, x, y, paint);
     		}
-
+    		if(mFpsMeter != null) {
+    			mFpsMeter.measure();
+    			mFpsMeter.draw(canvas, 20, 30);
+    		}
+    		if(Algorithm.capture) {
+    			canvas.drawText(Algorithm.fcount+"", 30, 120, paint);
+    		}
+    		canvas.drawText(Controller.getRectsSize()+"", 30, 60, paint);
+    		
         } catch(Exception e) {
         	Log.e(TAG, "Exception", e);
         } finally {
@@ -177,6 +185,7 @@ public class CameraView extends JavaCameraView implements Handler.Callback, CvCa
 	@Override
 	public Mat onCameraFrame(Mat inputFrame) {
 		// TODO Auto-generated method stub
+    	// get the time now in every frame
 		return null;
 	}
 	

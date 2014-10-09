@@ -1,8 +1,15 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <item
-        android:id="@+id/toogleCanny"
-        android:title="toogleCanny"/>
+        android:id="@+id/toogleCannyOff"
+        android:icon="@android:drawable/button_onoff_indicator_off"
+        android:title="Canny OFF"/>
+    
+    <item
+        android:id="@+id/toogleCannyOn"
+        android:icon="@android:drawable/button_onoff_indicator_on"
+        android:visible="false"
+        android:title="Canny ON"/>
     
     <item
         android:id="@+id/threshold"
@@ -22,5 +29,17 @@
     <item
         android:id="@+id/saveImage"
         android:title="Save"/>
+    
+   	<item
+        android:id="@+id/captureSetOff"
+        android:title="Capture OFF"
+        android:icon="@android:drawable/button_onoff_indicator_off"/>
+        
+    <item
+        android:id="@+id/captureSetOn"
+        android:title="Capture ON"
+        android:icon="@android:drawable/button_onoff_indicator_on"
+        android:visible="false"/>
+    
     
 </menu>

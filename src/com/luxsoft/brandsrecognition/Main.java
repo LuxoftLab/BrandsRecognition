@@ -53,7 +53,9 @@ public class Main extends Activity implements DialogInterface.OnClickListener {
 		
 		camera.setVisibility(SurfaceView.VISIBLE);
 		camera.setListener(controller);
-		OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_2_4_3, this, controller);
+		
+		camera.enableFpsMeter();
+		OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_2_4_6, this, controller);
 	}
 	
 	@Override
@@ -68,8 +70,15 @@ public class Main extends Activity implements DialogInterface.OnClickListener {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		int id = item.getItemId();
 		switch(id) {
-		case R.id.toogleCanny:
+		case R.id.toogleCannyOn:
 			controller.toogleShowCanny();
+			item.setVisible(false);
+			menu.findItem(R.id.toogleCannyOff).setVisible(true);
+			break;
+		case R.id.toogleCannyOff:
+			controller.toogleShowCanny();
+			item.setVisible(false);
+			menu.findItem(R.id.toogleCannyOn).setVisible(true);
 			break;
 		case R.id.blurOn:
 			controller.setBlur(false);
@@ -86,6 +95,18 @@ public class Main extends Activity implements DialogInterface.OnClickListener {
 			break;
 		case R.id.saveImage:
 			controller.saveImage();
+			break;
+		case R.id.captureSetOn:
+			Log.d("capture", "Main disable");
+			controller.captureSet();
+			item.setVisible(false);
+			menu.findItem(R.id.captureSetOff).setVisible(true);
+			break;
+		case R.id.captureSetOff:
+			Log.d("capture", "Main enable");
+			controller.captureSet();
+			item.setVisible(false);
+			menu.findItem(R.id.captureSetOn).setVisible(true);
 			break;
 		}
 		return super.onOptionsItemSelected(item);

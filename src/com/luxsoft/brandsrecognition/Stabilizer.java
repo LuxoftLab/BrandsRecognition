@@ -14,7 +14,7 @@ public class Stabilizer {
 	
 	private int processedFrames;
 	private int neededFrames;
-	
+
 	private LinkedList<LinkedList<Cascade>> queue;
 	private HashMap<Cascade, Integer> amountOfRepeats;
 	
@@ -24,7 +24,7 @@ public class Stabilizer {
 		//neededFrames = Integer.valueOf(parser.getAttributeValue(null, "neededFrames"));
 		//parser.nextTag();
 		processedFrames = 10;
-		neededFrames = 6;
+		neededFrames = 5;
 		queue = new LinkedList<LinkedList<Cascade>>();
 		amountOfRepeats = new HashMap<Cascade, Integer>();
 	}
@@ -79,5 +79,6 @@ public class Stabilizer {
 		}
 		return null;
 	}
+	
 
 }
